@@ -16,17 +16,17 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ms-auto">
-        <!-- <li class="nav-item active">
-          <a class="nav-link" href="#">Home</a>
+        <li class="nav-item active">
+          <a class="nav-link" href="admin_page_upload.php">Upload</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
+          <a class="nav-link" href="admin_page_read.php">Table</a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" href="#">Services</a>
         </li> -->
         <li class="nav-item">
-          <a class="nav-link text-danger" href="logout.php" >logout</a>
+          <a class="nav-link text-danger" href="logout.php" >Logout</a>
         </li>
       </ul>
     </div>

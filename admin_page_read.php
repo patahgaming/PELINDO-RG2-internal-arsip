@@ -1,0 +1,32 @@
+<?php
+include "functions.php";
+// cek apakah sudah login
+if (ifnotAdminRedirect()) {
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<?php include "header.php"; ?>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="alert alert-success">
+            <h3>selamat datang, <?= htmlspecialchars($_SESSION['user_nama']); ?></h3>
+        </div>
+    </div>
+    <div class="container mt-5">
+        <?php include "table_read_pdf_filter_new.php"; ?>
+    </div>
+    <div class="container mt-5">
+        <h4>Baru ditambahkan</h4>
+        <?php include "table_read_pdf.php"; ?>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+</html>

@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['pdf'])) {
     // bikin folder tahun/bulan
     $targetDir = $uploadDir . $tahun . "/" . $nama_bulan[$bulan] . "/";
     if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0777, true);
+        mkdir($targetDir, 0777, recursive: true);
     }
 
     // konversi tanggal ke format kalimat

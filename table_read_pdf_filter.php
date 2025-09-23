@@ -9,6 +9,7 @@ $files = getAllPdfFilesByMonthYear($month, $year);
 ?>
 
 <!-- Form filter -->
+<div class="container mt-5">
 <form method="get" class="mb-3">
     <label for="month">Bulan:</label>
     <select name="month" id="month">
@@ -37,7 +38,7 @@ $files = getAllPdfFilesByMonthYear($month, $year);
 
     <button type="submit" class="btn btn-primary">Filter</button>
 </form>
-
+</div>
 <?php
 if (empty($files)) {
     echo "<p>Tidak ada file PDF yang ditemukan.</p>";

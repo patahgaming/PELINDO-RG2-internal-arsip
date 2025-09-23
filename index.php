@@ -1,7 +1,7 @@
 <?php
 include "functions.php";
 if (isLoggedIn()) {
-    header("Location: admin_page.php");
+    header("Location: admin_page_upload.php");
     exit;
 }
 $error = ""; // buat nampung pesan error
@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pass = htmlspecialchars($_POST['pass']);
     
     if (login($nama, $pass)) {
-        header("Location: admin_page.php");
+        header("Location: admin_page_upload.php");
         exit;
     } else {
         $error = "Nama atau password salah!";
