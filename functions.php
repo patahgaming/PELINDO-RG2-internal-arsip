@@ -104,22 +104,42 @@ function addpdffile(string $judul, string $lokasi, string $tanggal): bool {
 
     return $ok;
 }
-function getAllPdfFiles(): array {
+function getAllPdfFiles(int $page = 1, int $limit = 10): array {
     $conn = connectDB();
     if (!$conn) return [];
 
-    $result = $conn->query("SELECT * FROM pdf ORDER BY tanggal DESC");
+    // hitung offset
+    $offset = ($page - 1) * $limit;
+
+    // ambil data dengan limit
+    $stmt = $conn->prepare("SELECT * FROM pdf ORDER BY tanggal DESC LIMIT ? OFFSET ?");
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
     $files = [];
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $files[] = $row;
-        }
-        $result->free();
+    while ($row = $result->fetch_assoc()) {
+        $files[] = $row;
     }
+    $stmt->close();
+
+    // ambil total data untuk hitung total halaman
+    $totalResult = $conn->query("SELECT COUNT(*) as total FROM pdf");
+    $totalRow = $totalResult->fetch_assoc();
+    $total = (int)$totalRow['total'];
+    $totalPages = ceil($total / $limit);
 
     $conn->close();
-    return $files;
+
+    return [
+        "data" => $files,
+        "total" => $total,
+        "totalPages" => $totalPages,
+        "currentPage" => $page,
+        "limit" => $limit
+    ];
 }
+
 function getAllPdfFilesByMonthYear(int $month, int $year): array {
     $conn = connectDB();
     if (!$conn) return [];

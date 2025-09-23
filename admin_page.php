@@ -21,9 +21,11 @@ if (ifnotAdminRedirect()) {
         <?php include "form_tambah_pdf_multiple.php"; ?>
     </div>
     <div class="container mt-5">
-        <?php include "tabel_read_pdf.php"; ?>
-
+        <?php include "table_read_pdf_filter.php"; ?>
     </div>
+    <div class="container mt-5">
+        <h4>Baru ditambahkan</h4>
+        <?php include "table_read_pdf.php"; ?>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 

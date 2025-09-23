@@ -16,7 +16,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item active">
+        <!-- <li class="nav-item active">
           <a class="nav-link" href="#">Home</a>
         </li>
         <li class="nav-item">
@@ -24,7 +24,7 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Services</a>
-        </li>
+        </li> -->
         <li class="nav-item">
           <a class="nav-link text-danger" href="logout.php" >logout</a>
         </li>
