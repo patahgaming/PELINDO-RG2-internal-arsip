@@ -192,35 +192,6 @@ function getFilteredPdfFiles(?int $month = null, ?int $year = null, ?string $jud
     return $files;
 }
 
-
-function deletePdfById(int $id): bool {
-    $conn = connectDB();
-    if (!$conn) return false;
-
-    // Ambil lokasi file dulu
-    $file = getPdfById($id);
-    if ($file && file_exists(__DIR__ . $file['lokasi'])) {
-        unlink(__DIR__ . $file['lokasi']); // Hapus file fisik
-    }
-
-    $stmt = $conn->prepare("DELETE FROM pdf WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $ok = $stmt->execute();
-
-    $stmt->close();
-    $conn->close();
-    return $ok;
-}
-
-function getRole() {
-    if (isset($_SESSION['role'])) {
-        return $_SESSION['role'];
-    }
-    return null;
-}
-function pdfDetails(int $id): ?array {
-    return getPdfById($id);
-}
 function getPdfById(int $id): ?array {
     $conn = connectDB();
     if (!$conn) return null;
@@ -239,5 +210,32 @@ function getPdfById(int $id): ?array {
     $stmt->close();
     $conn->close();
     return $file;
+}
+function deletePdfById(int $id): bool {
+    $conn = connectDB();
+    if (!$conn) return false;
+
+    // Ambil lokasi file dulu
+    $file = getPdfById($id);
+    if ($file && file_exists(__DIR__ . $file['lokasi'])) {
+        unlink(__DIR__ . $file['lokasi']); // Hapus file fisik
+    }
+
+    $stmt = $conn->prepare("DELETE FROM pdf WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $ok = $stmt->execute();
+
+    $stmt->close();
+    $conn->close();
+    return $ok;
+}
+function pdfDetails(int $id): ?array {
+    return getPdfById($id);
+}
+function getRole() {
+    if (isset($_SESSION['role'])) {
+        return $_SESSION['role'];
+    }
+    return null;
 }
 ?>
