@@ -192,25 +192,7 @@ function getFilteredPdfFiles(?int $month = null, ?int $year = null, ?string $jud
     return $files;
 }
 
-function getPdfById(int $id): ?array {
-    $conn = connectDB();
-    if (!$conn) return null;
 
-    $stmt = $conn->prepare("SELECT * FROM pdf WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $file = null;
-    if ($result) {
-        $file = $result->fetch_assoc();
-        $result->free();
-    }
-
-    $stmt->close();
-    $conn->close();
-    return $file;
-}
 function deletePdfById(int $id): bool {
     $conn = connectDB();
     if (!$conn) return false;
@@ -229,13 +211,33 @@ function deletePdfById(int $id): bool {
     $conn->close();
     return $ok;
 }
-function pdfDetails(int $id): ?array {
-    return getPdfById($id);
-}
+
 function getRole() {
     if (isset($_SESSION['role'])) {
         return $_SESSION['role'];
     }
     return null;
+}
+function pdfDetails(int $id): ?array {
+    return getPdfById($id);
+}
+function getPdfById(int $id): ?array {
+    $conn = connectDB();
+    if (!$conn) return null;
+
+    $stmt = $conn->prepare("SELECT * FROM pdf WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $file = null;
+    if ($result) {
+        $file = $result->fetch_assoc();
+        $result->free();
+    }
+
+    $stmt->close();
+    $conn->close();
+    return $file;
 }
 ?>
