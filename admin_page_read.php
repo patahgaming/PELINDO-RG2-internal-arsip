@@ -22,10 +22,10 @@ if (ifnotAdminRedirect()) {
     <div class="container mt-5">
         <?php include "table_read_pdf_filter_new.php"; ?>
     </div>
-    <div class="container mt-5">
+    <!-- <div class="container mt-5">
         <h4>Baru ditambahkan</h4>
         <?php include "table_read_pdf.php"; ?>
-    </div>
+    </div> -->
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 

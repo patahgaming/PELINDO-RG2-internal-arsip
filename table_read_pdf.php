@@ -3,7 +3,7 @@
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $limit = 10; // jumlah data per halaman
 
-$result = getAllPdfFiles($page, $limit);
+$result = getAllPdfFilesBetter($page, $limit);
 $files = $result['data'];
 $totalPages = $result['totalPages'];
 $currentPage = $result['currentPage'];

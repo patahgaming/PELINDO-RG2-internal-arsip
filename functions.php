@@ -1,4 +1,5 @@
 <?php
+echo '<meta name="robots" content="noindex, nofollow, noarchive">';
 session_start();
 function connectDB() {
     $host = "localhost";
@@ -140,12 +141,45 @@ function getAllPdfFiles(int $page = 1, int $limit = 10): array {
     ];
 }
 
-function getAllPdfFilesByMonthYear(int $month, int $year): array {
+function getAllPdfFilesBetter(?int $month = 0, ?int $year = 0, string $keyword = ""): array {
     $conn = connectDB();
     if (!$conn) return [];
 
-    $stmt = $conn->prepare("SELECT * FROM pdf WHERE MONTH(tanggal) = ? AND YEAR(tanggal) = ? ORDER BY tanggal DESC");
-    $stmt->bind_param("ii", $month, $year);
+    $sql = "SELECT * FROM pdf WHERE 1=1"; // base query
+    
+    $params = [];
+    $types  = "";
+
+    // filter bulan
+    if ($month != 0) {
+        $sql .= " AND MONTH(tanggal) = ?";
+        $types .= "i";
+        $params[] = $month;
+    }
+
+    // filter tahun
+    if ($year != 0) {
+        $sql .= " AND YEAR(tanggal) = ?";
+        $types .= "i";
+        $params[] = $year;
+    }
+
+    // filter judul
+    if (!empty($keyword)) {
+        $sql .= " AND judul LIKE ?";
+        $types .= "s";
+        $params[] = "%{$keyword}%";
+    }
+
+    $sql .= " ORDER BY tanggal DESC";
+
+    $stmt = $conn->prepare($sql);
+
+    // bind_param kalau ada filter
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -161,6 +195,8 @@ function getAllPdfFilesByMonthYear(int $month, int $year): array {
     $conn->close();
     return $files;
 }
+
+
 function getFilteredPdfFiles(?int $month = null, ?int $year = null, ?string $judul = null, ?string $tags = null): array {
     $conn = connectDB();
     if (!$conn) return [];

@@ -1,0 +1,13 @@
+RewriteEngine On
+
+# Tambahkan header noindex global
+<IfModule mod_headers.c>
+    Header set X-Robots-Tag "noindex, nofollow, noarchive"
+</IfModule>
+
+# kalau file atau folder ada, biarin aja jalan normal
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# sisanya reroute ke index.php
+RewriteRule ^ index.php [L]

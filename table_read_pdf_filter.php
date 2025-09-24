@@ -4,7 +4,7 @@ $month = isset($_GET['month']) ? (int)$_GET['month'] : date('m');
 $year  = isset($_GET['year']) ? (int)$_GET['year'] : date('Y');
 
 // Ambil data PDF sesuai filter
-$files = getAllPdfFilesByMonthYear($month, $year);
+$files = getAllPdfFilesBetter($month, $year);
 
 ?>
 
