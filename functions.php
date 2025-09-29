@@ -22,7 +22,7 @@ function login(string $username, string $password): bool {
     $conn = connectDB();
     if (!$conn) return false;
 
-    $stmt = $conn->prepare("SELECT id, pass, role FROM user WHERE nama = ?");
+    $stmt = $conn->prepare("SELECT id, pass, role, ayam FROM user WHERE nama = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -36,6 +36,8 @@ function login(string $username, string $password): bool {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_nama'] = $username;
         $_SESSION['role'] = $user['role'];
+        $_SESSION['ayam'] = $user['ayam'];
+        // untuk debug
         // var_dump($_SESSION);
         // exit;
         return true;
@@ -43,7 +45,7 @@ function login(string $username, string $password): bool {
     return false;
 }
 
-function register(string $nama, string $pass): bool {
+function register(string $nama, string $pass, string $ayam): bool {
     $conn = connectDB();
     if (!$conn) return false;
 
@@ -92,14 +94,14 @@ function logout() {
     exit;
 }
 
-function addpdffile(string $judul, string $lokasi, string $tanggal): bool {
+function addpdffile(string $judul, string $lokasi, string $tanggal, string $nama, string $ayam = "utilitas"): bool {
     $conn = connectDB();
     if (!$conn) return false;
 
-    $stmt = $conn->prepare("INSERT INTO pdf (judul, lokasi, tanggal) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $judul, $lokasi , $tanggal);
+    $stmt = $conn->prepare("INSERT INTO pdf (judul, lokasi, tanggal, upload_by, ayam) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("sssss", $judul, $lokasi , $tanggal, $nama, $ayam);
     $ok = $stmt->execute();
-
+    
     $stmt->close();
     $conn->close();
 
@@ -141,7 +143,7 @@ function getAllPdfFiles(int $page = 1, int $limit = 10): array {
     ];
 }
 
-function getAllPdfFilesBetter(?int $month = 0, ?int $year = 0, string $keyword = ""): array {
+function getAllPdfFilesBetter(?int $month = 0, ?int $year = 0, string $keyword = "", ?string $ayam = null): array {
     $conn = connectDB();
     if (!$conn) return [];
 
@@ -149,7 +151,6 @@ function getAllPdfFilesBetter(?int $month = 0, ?int $year = 0, string $keyword =
     
     $params = [];
     $types  = "";
-
     // filter bulan
     if ($month != 0) {
         $sql .= " AND MONTH(tanggal) = ?";

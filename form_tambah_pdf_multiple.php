@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['pdf'])) {
             $lokasi = "/uploads/pdf/" . $tahun . "/" . $nama_bulan[$bulan] . "/" . $fileName;
             
             // simpan ke DB
-            if (addpdffile($judul, $lokasi, $tanggal)) {
+            if (addpdffile($judul, $lokasi, $tanggal, )) {
                 echo "✅ $fileName berhasil diupload dan disimpan.<br>";
             } else {
                 echo "❌ Gagal simpan $fileName ke database.<br>";
