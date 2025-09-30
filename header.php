@@ -16,6 +16,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
       <ul class="navbar-nav ms-auto">
+        <?php if (isSuperAdmin()) : ?>
+        <li class="nav-item">
+          <a class="nav-link" href="super_admin_only.php">Super Admin</a>
+        </li>
+        <?php endif; ?>
         <li class="nav-item active">
           <a class="nav-link" href="admin_page_upload.php">Upload</a>
         </li>

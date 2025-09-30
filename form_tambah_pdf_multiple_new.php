@@ -13,6 +13,7 @@ $nama_bulan = [
     "11" => "November",
     "12" => "Desember"
 ];
+$ayam = $_SESSION['ayam'];
 // include "functions.php"; // biar ada fungsi addpdffile
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['pdf'])) {
@@ -22,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['pdf'])) {
     list($tahun, $bulan, $hari) = explode("-", $tanggal);
 
     // bikin folder tahun/bulan
-    $targetDir = $uploadDir . $tahun . "/" . $nama_bulan[$bulan] . "/";
+    $targetDir = $uploadDir .$ayam. "/" . $tahun . "/" . $nama_bulan[$bulan] . "/";
     if (!is_dir($targetDir)) {
         mkdir($targetDir, 0777, recursive: true);
     }
@@ -45,10 +46,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES['pdf'])) {
 
         if (move_uploaded_file($_FILES["pdf"]["tmp_name"][$i], $targetFile)) {
             $judul = pathinfo($fileName, PATHINFO_FILENAME); // nama file tanpa .pdf
-            $lokasi = "/uploads/pdf/" . $tahun . "/" . $nama_bulan[$bulan] . "/" . $fileName;
+            $lokasi = "/uploads/pdf/" .$ayam. "/" . $tahun . "/" . $nama_bulan[$bulan] . "/" . $fileName;
             
             // simpan ke DB
-            if (addpdffile($judul, $lokasi, $tanggal,$_SESSION['user_nama'])) {
+            if (addpdffile($judul, $lokasi, $tanggal,$_SESSION['user_nama'], $_SESSION['ayam'])) {
                 echo "✅ $fileName berhasil diupload dan disimpan.<br>";
             } else {
                 echo "❌ Gagal simpan $fileName ke database.<br>";

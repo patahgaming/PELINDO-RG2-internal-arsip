@@ -45,7 +45,7 @@ function login(string $username, string $password): bool {
     return false;
 }
 
-function register(string $nama, string $pass, string $ayam): bool {
+function register(?string $nama, ?string $pass, ?string $ayam = "unset"): bool {
     $conn = connectDB();
     if (!$conn) return false;
 
@@ -65,8 +65,8 @@ function register(string $nama, string $pass, string $ayam): bool {
 
     // kalau belum ada → insert
     $hashedPassword = password_hash($pass, PASSWORD_BCRYPT);
-    $stmt = $conn->prepare("INSERT INTO user (nama, pass) VALUES (?, ?)");
-    $stmt->bind_param("ss", $nama, $hashedPassword);
+    $stmt = $conn->prepare("INSERT INTO user (nama, pass, ayam) VALUES (?, ?, ?)");
+    $stmt->bind_param("sss", $nama, $hashedPassword, $ayam);
     $ok = $stmt->execute();
 
     $stmt->close();
@@ -79,6 +79,12 @@ function isLoggedIn(): bool {
 }
 function isAdmin(): bool {
     return isset($_SESSION['role']) && $_SESSION['role'] === 'bulu_bulul';
+}
+function isSuperAdmin(): bool {
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'super_bulu_bulul';
+}
+function isUser(): bool {
+    return isset($_SESSION['role']) && $_SESSION['role'] === 'user';
 }
 function ifnotAdminRedirect() {
     if (!isLoggedIn() || !isAdmin()) {
@@ -93,7 +99,93 @@ function logout() {
     header("Location: index.php");
     exit;
 }
+function getAllUsers(): array {
+    $conn = connectDB();
+    if (!$conn) return [];
 
+    $stmt = $conn->prepare("SELECT id, nama, role, ayam FROM user");
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $users = [];
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
+    $stmt->close();
+    $conn->close();
+    return $users;
+}
+function update_user_role(string $user_id, string $new_role): bool {
+    $conn = connectDB();
+    if (!$conn) return false;
+
+    $stmt = $conn->prepare("UPDATE user SET role = ? WHERE id = ?");
+    $stmt->bind_param("si", $new_role, $user_id);
+    $ok = $stmt->execute();
+
+    $stmt->close();
+    $conn->close();
+    return $ok;
+}
+function getUserById(int $id): ?array {
+    $conn = connectDB();
+    if (!$conn) return null;
+
+    $stmt = $conn->prepare("SELECT id, nama, role, ayam FROM user WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $user = null;
+    if ($result) {
+        $user = $result->fetch_assoc();
+        $result->free();
+    }
+
+    $stmt->close();
+    $conn->close();
+    return $user;
+}
+function deleteUser(int $id): bool {
+    $conn = connectDB();
+    if (!$conn) return false;
+
+    $stmt = $conn->prepare("DELETE FROM user WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $ok = $stmt->execute();
+
+    $stmt->close();
+    $conn->close();
+    return $ok;
+}
+function addAyam(string $nama): bool {
+    $conn = connectDB();
+    if (!$conn) return false;
+
+    // cek apakah ayam sudah ada
+    $stmt = $conn->prepare("SELECT id FROM ayam WHERE nama = ?");
+    $stmt->bind_param("s", $nama);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $stmt->close();
+        $conn->close();
+        return false; // ayam sudah ada
+    }
+
+    $stmt->close();
+
+    // kalau belum ada → insert
+    $stmt = $conn->prepare("INSERT INTO ayam (nama) VALUES (?)");
+    $stmt->bind_param("s", $nama);
+    $ok = $stmt->execute();
+
+    $stmt->close();
+    $conn->close();
+
+    return $ok;
+}
 function addpdffile(string $judul, string $lokasi, string $tanggal, string $nama, string $ayam = "utilitas"): bool {
     $conn = connectDB();
     if (!$conn) return false;
@@ -101,7 +193,7 @@ function addpdffile(string $judul, string $lokasi, string $tanggal, string $nama
     $stmt = $conn->prepare("INSERT INTO pdf (judul, lokasi, tanggal, upload_by, ayam) VALUES (?, ?, ?, ?, ?)");
     $stmt->bind_param("sssss", $judul, $lokasi , $tanggal, $nama, $ayam);
     $ok = $stmt->execute();
-    
+
     $stmt->close();
     $conn->close();
 
@@ -142,15 +234,40 @@ function getAllPdfFiles(int $page = 1, int $limit = 10): array {
         "limit" => $limit
     ];
 }
-
-function getAllPdfFilesBetter(?int $month = 0, ?int $year = 0, string $keyword = "", ?string $ayam = null): array {
+function getAllAyam(): array {
     $conn = connectDB();
     if (!$conn) return [];
 
-    $sql = "SELECT * FROM pdf WHERE 1=1"; // base query
+    $stmt = $conn->prepare("SELECT nama FROM `ayam`");
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $ayams = [];
+    while ($row = $result->fetch_assoc()) {
+        $ayams[] = $row['nama']; // ✅ ambil sesuai kolom SELECT
+    }
+    $stmt->close();
+    $conn->close();
+    return $ayams;
+}
+function getAllPdfFilesBetter(
+    ?int $month = 0, 
+    ?int $year = 0, 
+    string $keyword = "", 
+    ?string $ayam = null,
+    ?string $role = null
+): array {
+    // var_dump($month, $year, $keyword, $ayam, $role);
+    $conn = connectDB();
+    if (!$conn) return [];
+    // var_dump($month, $year, $keyword, $ayam, $role);
+    // exit;
+    
+    $sql = "SELECT * FROM pdf WHERE 1=1"; 
     
     $params = [];
     $types  = "";
+
     // filter bulan
     if ($month != 0) {
         $sql .= " AND MONTH(tanggal) = ?";
@@ -171,12 +288,24 @@ function getAllPdfFilesBetter(?int $month = 0, ?int $year = 0, string $keyword =
         $types .= "s";
         $params[] = "%{$keyword}%";
     }
+    // filter divisi (ayam)
+    
+    if ($role === 'bulu_bulul' || $role === 'user') {
+        // var_dump($role, $ayam);
+        // exit;
+        // kalau bukan super admin, paksa ayam sesuai divisi user   
+            if (!empty($ayam)) {
+        $sql .= " AND ayam = ?";
+        $types .= "s";
+        $params[] = $ayam;
+    }
+    }
+
 
     $sql .= " ORDER BY tanggal DESC";
 
     $stmt = $conn->prepare($sql);
 
-    // bind_param kalau ada filter
     if (!empty($params)) {
         $stmt->bind_param($types, ...$params);
     }
@@ -191,11 +320,12 @@ function getAllPdfFilesBetter(?int $month = 0, ?int $year = 0, string $keyword =
         }
         $result->free();
     }
-
+    
     $stmt->close();
     $conn->close();
     return $files;
 }
+
 
 
 function getFilteredPdfFiles(?int $month = null, ?int $year = null, ?string $judul = null, ?string $tags = null): array {

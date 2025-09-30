@@ -49,9 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill">Login</button>
                 </form>
 
-                <!-- <p class="text-center mt-4 mb-0 text-muted">
-                    Belum punya akun? <a href="register.php" class="text-decoration-none">Daftar</a>
-                </p> -->
+                <p class="text-center mt-4 mb-0 text-muted">
+                    Belum punya akun? <a href="register_user.php" class="text-decoration-none">Daftar</a>
+                </p>
             </div>
         </div>
     </div>

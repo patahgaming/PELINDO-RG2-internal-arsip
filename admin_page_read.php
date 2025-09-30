@@ -1,7 +1,8 @@
 <?php
 include "functions.php";
 // cek apakah sudah login
-if (ifnotAdminRedirect()) {
+if (!isLoggedIn()) {
+    header("Location: index.php");
     exit;
 }
 ?>

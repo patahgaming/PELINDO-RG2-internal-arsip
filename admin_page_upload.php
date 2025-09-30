@@ -1,12 +1,15 @@
 <?php
 include "functions.php";
 // cek apakah sudah login
-if (ifnotAdminRedirect()) {
-    exit;
+if(isLoggedIn()) {
+    if (!isAdmin() && !isSuperAdmin()) {
+        echo "<script>alert('Anda tidak memiliki akses ke halaman ini.'); window.location.href = 'admin_page_read.php';</script>";
+        exit;
+    }
 }
 ?>
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id">    
 <head>
     <meta charset="UTF-8">
     <title>Admin Page</title>

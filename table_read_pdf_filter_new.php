@@ -27,7 +27,7 @@ $keywords = isset($_GET['keywords']) ? trim($_GET['keywords']) : '';
 // var_dump($year);
 // exit;
 // Ambil data PDF sesuai filter
-$files = getAllPdfFilesBetter($month, $year , $keywords);
+$files = getAllPdfFilesBetter($month, $year , $keywords, $_SESSION['ayam'], $_SESSION['role']);
 
 ?>
 

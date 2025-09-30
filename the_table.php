@@ -16,7 +16,11 @@
                             <th>Judul</th>
                             <th>Lokasi</th>
                             <th>Tanggal</th>
-                            <th style="width: 150px;">Aksi</th>
+                            <th>uploader</th>
+                            <th>divisi</th>
+                            <?php if (isAdmin() || isSuperAdmin()): ?>
+                                <th style="width: 150px;">Aksi</th>
+                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,14 +37,17 @@
                                     </a>
                                 </td>
                                 <td><?= htmlspecialchars($file['tanggal']) ?></td>
-                                <td>
-                                    <a href="delete_pdf.php?id=<?= urlencode($file['id']) ?>" 
-                                       class="btn btn-danger btn-sm"
-                                       onclick="return confirm('Yakin ingin menghapus file ini?')">
-                                        <i class="bi bi-trash"></i> Hapus
-                                    </a>
-                                </td>
-                            </tr>
+                                <td><?= htmlspecialchars($file['upload_by']) ?></td>
+                                <td><?= htmlspecialchars($file['ayam']) ?></td>
+                                <?php if (isAdmin() || isSuperAdmin()): ?>
+                                    <td>
+                                        <a href="delete_pdf.php?id=<?= urlencode($file['id']) ?>" 
+                                           class="btn btn-danger btn-sm"
+                                           onclick="return confirm('Yakin ingin menghapus file ini?')">
+                                            <i class="bi bi-trash"></i> Hapus
+                                        </a>
+                                    </td>
+                                <?php endif; ?>                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>

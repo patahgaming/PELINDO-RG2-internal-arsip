@@ -1,10 +1,16 @@
 <?php
-include "functions.php";
+// include "functions.php";
+// cek apakah sudah login
+if(isLoggedIn()) {
+    if (!isSuperAdmin()) {
+        echo "<script>alert('Anda tidak memiliki akses ke halaman ini.'); window.location.href = 'admin_page_read.php';</script>";
+        exit;
+    }
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama = htmlspecialchars($_POST['nama']);
-    $pass = htmlspecialchars($_POST['pass']);
-    register($nama, $pass);
+    $ayam = htmlspecialchars($_POST['ayam']);
+    addAyam($ayam);
     header("Location: index.php"); // refresh biar form gak ke-submit ulang
     exit;
 }
@@ -21,17 +27,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body class="bg-light">
 
 <div class="container mt-5">
-    <h1 class="mb-4">register</h1>
+    <h1 class="mb-4">tambah divisi</h1>
     <form method="POST" action="">
         <div class="mb-3">
-            <label for="nama" class="form-label">Nama</label>
-            <input type="text" class="form-control" id="nama" name="nama" required>
+            <label for="ayam" class="form-label">Divisi</label>
+            <input type="text" class="form-control" id="ayam" name="ayam" required>
         </div>
-        <div class="mb-3">
-            <label for="pass" class="form-label">Password</label>
-            <input type="password" class="form-control" id="pass" name="pass" required>
-        </div>
-        <button type="submit" class="btn btn-primary">register</button>
+        <button type="submit" class="btn btn-primary">Tambah</button>
     </form>
 </div>
 
