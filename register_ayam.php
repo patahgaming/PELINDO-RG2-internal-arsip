@@ -26,16 +26,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 <body class="bg-light">
 
-<div class="container mt-5">
-    <h1 class="mb-4">tambah divisi</h1>
-    <form method="POST" action="">
-        <div class="mb-3">
-            <label for="ayam" class="form-label">Divisi</label>
-            <input type="text" class="form-control" id="ayam" name="ayam" required>
+<div class="container mt-5" style="max-width: 600px;">
+    <div class="card shadow-lg border-0 rounded-3">
+        <div class="card-header bg-primary text-white text-center fw-bold">
+            Tambah Divisi
         </div>
-        <button type="submit" class="btn btn-primary">Tambah</button>
-    </form>
+        <div class="card-body p-4">
+            <form method="POST" action="">
+                <!-- Input Divisi -->
+                <div class="mb-4">
+                    <label for="ayam" class="form-label fw-semibold">
+                        Nama Divisi
+                    </label>
+                    <input type="text" class="form-control" id="ayam" name="ayam" required>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle me-2"></i> Tambah
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>

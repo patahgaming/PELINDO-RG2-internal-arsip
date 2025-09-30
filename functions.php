@@ -1,3 +1,46 @@
+<!-- /**
+ * Pelindo Arsip Functions
+ * 
+ * This file contains utility functions for user authentication, authorization, 
+ * database connection, PDF file management, and division (ayam) management.
+ * 
+ * Functions:
+ * - connectDB(): Establishes a MySQL database connection.
+ * - sanitizeInput($data): Sanitizes user input.
+ * - login($username, $password): Authenticates user and starts session.
+ * - register($nama, $pass, $ayam): Registers a new user.
+ * - isLoggedIn(): Checks if a user is logged in.
+ * - isAdmin(): Checks if the logged-in user is an admin.
+ * - isSuperAdmin(): Checks if the logged-in user is a super admin.
+ * - isUser(): Checks if the logged-in user is a regular user.
+ * - ifnotAdminRedirect(): Redirects to index.php if not admin.
+ * - logout(): Logs out the user and destroys session.
+ * - getAllUsers(): Retrieves all users from the database.
+ * - update_user_role($user_id, $new_role): Updates a user's role.
+ * - getUserById($id): Retrieves user details by ID.
+ * - deleteUser($id): Deletes a user by ID.
+ * - addAyam($nama): Adds a new division (ayam).
+ * - addpdffile($judul, $lokasi, $tanggal, $nama, $ayam): Adds a new PDF file record.
+ * - getAllPdfFiles($page, $limit): Retrieves paginated PDF files.
+ * - getAllAyam(): Retrieves all division names.
+ * - getAllPdfFilesBetter($month, $year, $keyword, $ayam, $role): Retrieves filtered PDF files.
+ * - getFilteredPdfFiles($month, $year, $judul, $tags): Retrieves PDF files with advanced filters.
+ * - getPdfById($id): Retrieves PDF file details by ID.
+ * - deletePdfById($id): Deletes a PDF file by ID and removes the physical file.
+ * - pdfDetails($id): Alias for getPdfById().
+ * - getRole(): Gets the current user's role from session.
+ * 
+ * Security:
+ * - Uses prepared statements to prevent SQL injection.
+ * - Passwords are hashed using bcrypt.
+ * - Input is sanitized before processing.
+ * 
+ * Session:
+ * - Session is started for authentication and authorization.
+ * 
+ * Usage:
+ * Include this file in your PHP project to use the provided functions for user and PDF management.
+ */ -->
 <?php
 echo '<meta name="robots" content="noindex, nofollow, noarchive">';
 session_start();
@@ -158,6 +201,15 @@ function deleteUser(int $id): bool {
     $conn->close();
     return $ok;
 }
+/**
+ * Menambahkan data ayam ke dalam database jika belum ada.
+ *
+ * Fungsi ini akan memeriksa apakah ayam dengan nama yang diberikan sudah ada di tabel 'ayam'.
+ * Jika belum ada, maka data ayam akan ditambahkan ke database.
+ *
+ * @param string $nama Nama ayam yang akan ditambahkan.
+ * @return bool True jika penambahan berhasil, false jika gagal atau ayam sudah ada.
+ */
 function addAyam(string $nama): bool {
     $conn = connectDB();
     if (!$conn) return false;
@@ -186,6 +238,17 @@ function addAyam(string $nama): bool {
 
     return $ok;
 }
+/**
+ * Inserts a new PDF file record into the database.
+ *
+ * @param string $judul   The title of the PDF.
+ * @param string $lokasi  The location or path of the PDF file.
+ * @param string $tanggal The date associated with the PDF.
+ * @param string $nama    The name of the user uploading the PDF.
+ * @param string $ayam    An optional utility field (default: "utilitas").
+ *
+ * @return bool Returns true on successful insertion, false otherwise.
+ */
 function addpdffile(string $judul, string $lokasi, string $tanggal, string $nama, string $ayam = "utilitas"): bool {
     $conn = connectDB();
     if (!$conn) return false;
@@ -234,6 +297,11 @@ function getAllPdfFiles(int $page = 1, int $limit = 10): array {
         "limit" => $limit
     ];
 }
+/**
+ * Retrieves all 'nama' values from the 'ayam' table in the database.
+ *
+ * @return array An array of 'nama' strings from the 'ayam' table.
+ */
 function getAllAyam(): array {
     $conn = connectDB();
     if (!$conn) return [];
@@ -250,6 +318,24 @@ function getAllAyam(): array {
     $conn->close();
     return $ayams;
 }
+/**
+ * Retrieves all PDF files from the database with optional filtering.
+ *
+ * Filters can be applied based on month, year, keyword in the title, division (ayam), and user role.
+ * - If $month is provided and not zero, filters by the given month.
+ * - If $year is provided and not zero, filters by the given year.
+ * - If $keyword is provided and not empty, filters by titles containing the keyword.
+ * - If $role is 'bulu_bulul' or 'user', and $ayam is provided, filters by the given division.
+ * - Results are ordered by the 'tanggal' field in descending order.
+ *
+ * @param int|null    $month   The month to filter by (1-12). Default is 0 (no filter).
+ * @param int|null    $year    The year to filter by. Default is 0 (no filter).
+ * @param string      $keyword The keyword to search in the title. Default is empty string.
+ * @param string|null $ayam    The division to filter by. Default is null.
+ * @param string|null $role    The user role for access control. Default is null.
+ *
+ * @return array Returns an array of associative arrays representing PDF files.
+ */
 function getAllPdfFilesBetter(
     ?int $month = 0, 
     ?int $year = 0, 
