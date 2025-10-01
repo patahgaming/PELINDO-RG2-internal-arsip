@@ -58,7 +58,7 @@ function connectDB() {
     return $conn;
 }
 
-function sanitizeInput($data) {
+function sanitizeInput($data): string {
     return htmlspecialchars(strip_tags(trim($data)));
 }
 function login(string $username, string $password): bool {
