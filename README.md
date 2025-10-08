@@ -36,12 +36,12 @@ mysql -u pelindo_user -p pelindo_arsip < database/pelindo_arsip.sql
 ```
 
 ### 4. Konfigurasi Aplikasi
-Sesuaikan file `config.php` atau `.env`:
+Sesuaikan file `function.php`:
 ```php
 <?php
     $host = "localhost";
-    $user = "root";   
-    $pass = "";        
+    $user = "pelindo_user";   
+    $pass = "passwordku";        
     $dbname = "pelindo_arsip";
 ?>
 ```
